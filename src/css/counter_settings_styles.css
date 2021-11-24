@@ -1,0 +1,10 @@
+.settings {
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+}
+
+.settings > button {
+    width: fit-content;
+    margin: 10px auto;
+}
