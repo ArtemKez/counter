@@ -14,7 +14,18 @@ class BlockCounter extends Component {
         this.state = {
             count: 0,
             isAdd: true,
-            step: 1
+            step: 1,
+            timoutInterval: 1000,
+            isAutokclick: false,
+            timeVasStart: 0,
+        }
+    }
+
+    btnHandler = () => {
+        if (this.state.isAdd) {
+            this.setCount(this.state.count + this.state.step)
+        } else {
+            this.setCount(this.state.count - this.state.step)
         }
     }
 
@@ -37,10 +48,30 @@ class BlockCounter extends Component {
         this.setState({
             count: 0,
             isAdd: true,
-            step: 1
+            step: 1,
+            timoutInterval: 1000,
+            isAutoClick: false,
+            timeVasStart: 0,
         })
     }
 
+    startTimout = () => {
+        if (this.state.isAutoClick) {
+            setTimeout(() => {
+                this.startTimout()
+            }, this.state.timoutInterval)
+        }
+    }
+
+    startInterval = () => {
+        for (let i = 0; i < 30; i++) {
+
+        }
+    }
+
+    enebleAutoClick = () => {
+
+    }
 
     render() {
         return (
@@ -56,6 +87,17 @@ class BlockCounter extends Component {
                          operator={this.state.isAdd}
                          setCount={this.setCount}
                          step={this.state.step}
+                         btnHandler={this.btnHandler}
+                />
+                <div>seconds leave: {}</div>
+                <div>start auto click: {}</div>
+                <input
+                    type="number"
+                    min="100"
+                    max="100000"
+                    step="100"
+                    value={'1000'}
+                    onChange={''}
                 />
             </div>
         );
