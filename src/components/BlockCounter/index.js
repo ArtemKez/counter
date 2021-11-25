@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import Counter from "./Counter";
-import CounterSettings from "./CounterSettings"
+import CounterSettings from "./CounterSettings";
 
 function changeOperator() {
     this.setState({
@@ -16,18 +16,58 @@ class BlockCounter extends Component {
             isAdd: true,
             step: 1,
             timoutInterval: 1000,
-            isAutokclick: false,
-            timeVasStart: 0,
+            isAutoClick: false,
+            timeAfterStartAutoClick: 0,
+            timeAutoClick: 30,
+            interval: null,
+            timeout: null,
         }
     }
 
+    autoClick = () => {
+        if (!this.state.isAutoClick) {
+            return;
+        }
+        setTimeout(() => {
+            this.autoClick();
+        }, this.state.timoutInterval);
+    }
+
+    autoClickTime = () => {
+        this.setState({
+            isAutoClick: true,
+        });
+        this.setState({
+            interval: setInterval(() => {
+                console.log('setInterval',);
+                if (this.state.timeAfterStartAutoClick === this.state.timeAutoClick) {
+                    this.setState({
+                        isAutoClick: false
+                    })
+                    clearInterval(this.state.interval);
+                    return;
+                }
+                this.setState({
+                    timeAfterStartAutoClick: this.state.timeAfterStartAutoClick + 1
+                })
+            }, 1000)
+        });
+
+    };
+
+    autoClickStarted = () => {
+        setTimeout(() => {
+            this.btnHandler();
+        }, this.state.timoutInterval);
+    };
+
     btnHandler = () => {
         if (this.state.isAdd) {
-            this.setCount(this.state.count + this.state.step)
+            this.setCount(this.state.count + this.state.step);
         } else {
-            this.setCount(this.state.count - this.state.step)
+            this.setCount(this.state.count - this.state.step);
         }
-    }
+    };
 
     changeOperator = changeOperator.bind(this);
 
@@ -35,14 +75,14 @@ class BlockCounter extends Component {
         const newStep = +event?.target?.value;
         this.setState({
             step: newStep
-        })
-    }
+        });
+    };
 
     setCount = (newCount) => {
         this.setState({
             count: newCount
-        })
-    }
+        });
+    };
 
     reset = () => {
         this.setState({
@@ -51,26 +91,16 @@ class BlockCounter extends Component {
             step: 1,
             timoutInterval: 1000,
             isAutoClick: false,
-            timeVasStart: 0,
+            timeAfterStartAutoClick: 0,
+        });
+    };
+
+    frequencyChangeHandler = (event) => {
+        const inputValue = +event?.target?.value;
+        this.setState({
+            timoutInterval: inputValue
         })
-    }
-
-    startTimout = () => {
-        if (this.state.isAutoClick) {
-            setTimeout(() => {
-                this.startTimout()
-            }, this.state.timoutInterval)
-        }
-    }
-
-    startInterval = () => {
-        for (let i = 0; i < 30; i++) {
-
-        }
-    }
-
-    enebleAutoClick = () => {
-
+        console.log(this.state.timoutInterval);
     }
 
     render() {
@@ -89,15 +119,16 @@ class BlockCounter extends Component {
                          step={this.state.step}
                          btnHandler={this.btnHandler}
                 />
-                <div>seconds leave: {}</div>
-                <div>start auto click: {}</div>
+                <div>seconds leave: {this.state.timeAfterStartAutoClick}</div>
+                <button onClick={this.autoClickTime}>start auto click</button>
+                <div>timout interval</div>
                 <input
                     type="number"
                     min="100"
                     max="100000"
                     step="100"
-                    value={'1000'}
-                    onChange={''}
+                    value={this.state.timoutInterval}
+                    onChange={this.frequencyChangeHandler}
                 />
             </div>
         );
