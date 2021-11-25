@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import Counter from "./Counter";
 import CounterSettings from "./CounterSettings";
+import AutoClick from "./AutoClick";
 
 function changeOperator() {
     this.setState({
@@ -140,16 +141,10 @@ class BlockCounter extends Component {
                          step={this.state.step}
                          btnHandler={this.btnHandler}
                 />
-                <div>seconds leave: {this.state.timeAfterStartAutoClick}</div>
-                <button onClick={this.autoStart}>start auto click</button>
-                <div>timout interval</div>
-                <input
-                    type="number"
-                    min="100"
-                    max="100000"
-                    step="100"
-                    value={this.state.timoutInterval}
-                    onChange={this.frequencyChangeHandler}
+                <AutoClick timeAfterStartAutoClick={this.state.timeAfterStartAutoClick}
+                                 autoStart={this.autoStart}
+                                 timoutInterval={this.state.timoutInterval}
+                                 frequencyChangeHandler={this.frequencyChangeHandler}
                 />
             </div>
         );
