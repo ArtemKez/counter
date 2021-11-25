@@ -24,27 +24,29 @@ class BlockCounter extends Component {
         }
     }
 
-    autoClick = () => {
+    autoClick = async () => {
         if (!this.state.isAutoClick) {
             return;
         }
-        setTimeout(() => {
-            this.autoClick();
-        }, this.state.timoutInterval);
+        this.setState({
+            timout: setTimeout(() => {
+                this.btnHandler();
+                this.autoClick();
+            }, this.state.timoutInterval)
+        })
     }
 
-    autoClickTime = () => {
-        this.setState({
-            isAutoClick: true,
+    autoClickTime = async () => {
+        await this.setState({
+            isAutoClick: true
         });
         this.setState({
             interval: setInterval(() => {
-                console.log('setInterval',);
                 if (this.state.timeAfterStartAutoClick === this.state.timeAutoClick) {
                     this.setState({
                         isAutoClick: false
                     })
-                    clearInterval(this.state.interval);
+                    this.stopTimerInterval()
                     return;
                 }
                 this.setState({
@@ -52,14 +54,21 @@ class BlockCounter extends Component {
                 })
             }, 1000)
         });
-
     };
 
-    autoClickStarted = () => {
-        setTimeout(() => {
-            this.btnHandler();
-        }, this.state.timoutInterval);
-    };
+    autoStart = async () => {
+        this.resetInterval()
+        this.stopTimerInterval()
+        await this.autoClickTime()
+        this.autoClick()
+    }
+
+    resetInterval = () => {
+        this.setState({
+            isAutoClick: false,
+            timeAfterStartAutoClick: 0,
+        })
+    }
 
     btnHandler = () => {
         if (this.state.isAdd) {
@@ -100,7 +109,19 @@ class BlockCounter extends Component {
         this.setState({
             timoutInterval: inputValue
         })
-        console.log(this.state.timoutInterval);
+    }
+
+    componentDidMount() {
+        this.autoStart()
+    }
+
+    componentWillUnmount() {
+        this.stopTimerInterval()
+    }
+
+    stopTimerInterval() {
+        clearInterval(this.state.interval)
+        clearTimeout(this.state.timout)
     }
 
     render() {
@@ -120,7 +141,7 @@ class BlockCounter extends Component {
                          btnHandler={this.btnHandler}
                 />
                 <div>seconds leave: {this.state.timeAfterStartAutoClick}</div>
-                <button onClick={this.autoClickTime}>start auto click</button>
+                <button onClick={this.autoStart}>start auto click</button>
                 <div>timout interval</div>
                 <input
                     type="number"
